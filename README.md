@@ -8,7 +8,7 @@ This plugin requires the [RainLab.User](https://github.com/rainlab/user-plugin/)
 
 ## Creating Permissions
 
-In the backend, nagivate to RainLab "Users" menu, on the left side there should be a open lock icon
+In the backend, navigate to RainLab "Users" menu, on the left side there should be a open lock icon
 with the name "Permissions". Click this and it will take you to the list of permission.
 - Click "New Permission" to get to a form where you can enter information about a new
 permission you would like to create (dont forget to save).
@@ -16,7 +16,7 @@ permission you would like to create (dont forget to save).
 
 ## Managing User Permissions
 
-In the backend, nagivate to RainLab "Users" menu, either create a new user by clicking "New User" and
+In the backend, navigate to RainLab "Users" menu, either create a new user by clicking "New User" and
 navigate to the "Permissions" tab of the newly opened form. Here you can choose between "ALLOW", "INHERIT" or "DENY"
 for all existing permissions.
 - "ALLOW" will grant the user the permission, this takes precedence over group permissions.
@@ -30,7 +30,7 @@ and navigate to the "Permissions" tab.
 
 ## Managing Group Permissions
 
-In the backend, nagivate to RainLab "Users" menu, either create a new group by clicking "User Groups" and then
+In the backend, navigate to RainLab "Users" menu, either create a new group by clicking "User Groups" and then
 on "New Group" or click the group you want to edit. Navigate to the "Permissions" tab and click (check) all the
 permissions you want this group to have.
 
