@@ -153,7 +153,8 @@ class Plugin extends \System\Classes\PluginBase
                             $groups_allowed_permissions = array_merge($groups_allowed_permissions,
                                 array_diff($group_allowed_permissions, $groups_allowed_permissions));
                         }
-                        $inherited_allowed_permissions = array_intersect($inherit_permissions, $groups_allowed_permissions);
+                        $inherited_allowed_permissions = array_intersect($inherit_permissions,
+                                                                         $groups_allowed_permissions);
                         if($inherited_allowed_permissions)
                         {
                             foreach($inherited_allowed_permissions as $permissionId => $permissionName)
