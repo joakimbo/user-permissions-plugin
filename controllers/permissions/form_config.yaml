@@ -1,0 +1,22 @@
+# ===================================
+#  Form Behavior Config
+# ===================================
+
+name: Permission
+form: $/jbonnydev/userpermissions/models/permission/fields.yaml
+modelClass: JBonnyDev\UserPermissions\Models\Permission
+
+create:
+    title: New Permission
+    redirect: jbonnydev/userpermissions/permissions/update/:id
+    redirectClose: jbonnydev/userpermissions/permissions
+
+update:
+    title: Edit Permission
+    redirect: jbonnydev/userpermissions/permissions/update/:id
+    redirectClose: jbonnydev/userpermissions/permissions
+
+preview:
+    title: View Permission
+
+defaultRedirect: jbonnydev/userpermissions/permissions

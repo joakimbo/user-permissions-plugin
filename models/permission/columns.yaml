@@ -1,0 +1,7 @@
+# ===================================
+#  List Column Definitions
+# ===================================
+
+columns:
+    name: jbonnydev.userpermissions::lang.permission.model_name
+    description: jbonnydev.userpermissions::lang.permission.model_desc

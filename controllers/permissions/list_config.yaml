@@ -1,0 +1,13 @@
+# ===================================
+#  List Behavior Config
+# ===================================
+
+title: Permissions
+list: ~/plugins/jbonnydev/userpermissions/models/permission/columns.yaml
+modelClass: JBonnyDev\UserPermissions\Models\Permission
+recordUrl: jbonnydev/userpermissions/permissions/update/:id
+
+toolbar:
+    buttons: list_toolbar
+    search:
+        prompt: Find records

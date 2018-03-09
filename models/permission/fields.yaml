@@ -1,0 +1,19 @@
+# ===================================
+#  Form Field Definitions
+# ===================================
+
+fields:
+    id:
+        label: jbonnydev.userpermissions::lang.permission.model_id
+        description: Id of the permission
+        disabled: true
+
+    name:
+        label: jbonnydev.userpermissions::lang.permission.model_name
+        description: Name of the permission
+        type: text
+
+    description:
+        label: jbonnydev.userpermissions::lang.permission.model_desc
+        description: Description of the permission
+        type: text
