@@ -2,17 +2,17 @@
 #  Form Behavior Config
 # ===================================
 
-name: Permission
+name: jbonnydev.userpermissions::lang.permissions.menu_label
 form: $/jbonnydev/userpermissions/models/permission/fields.yaml
 modelClass: JBonnyDev\UserPermissions\Models\Permission
 
 create:
-    title: New Permission
+    title: jbonnydev.userpermissions::lang.permissions.create_permission
     redirect: jbonnydev/userpermissions/permissions/update/:id
     redirectClose: jbonnydev/userpermissions/permissions
 
 update:
-    title: Edit Permission
+    title: jbonnydev.userpermissions::lang.permissions.update_permission
     redirect: jbonnydev/userpermissions/permissions/update/:id
     redirectClose: jbonnydev/userpermissions/permissions
 

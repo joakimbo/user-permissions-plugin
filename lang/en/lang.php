@@ -11,8 +11,10 @@ return [
     'permissions' => [
         'menu_label' => 'Permissions',
         'menu_desc' => 'Choose the permissions',
-        'create_permission' => 'Create Permission',
+        'create_permission' => 'New Permission',
+        'update_permission' => 'Update Permission',
         'delete_permission' => 'Delete Permission',
+        'delete_confirm' => 'Do you really want to delete this permission?',
     ],
     'permission' => [
         'model_id' => 'ID',
