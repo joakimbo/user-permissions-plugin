@@ -70,9 +70,6 @@ class Plugin extends \System\Classes\PluginBase
     {
         UserModel::extend(function($model)
         {
-
-            $model->addPurgeable('userpermissioneditor');
-
             $model->belongsToMany['user_permissions'] = ['JBonnyDev\UserPermissions\Models\Permission',
                 'table' => 'jbonnydev_userpermissions_user_permission',
                 'key' => 'user_id',
@@ -88,36 +85,10 @@ class Plugin extends \System\Classes\PluginBase
                 {
                     foreach($permissions as $permission)
                     {
-                        $model->user_permissions()->attach($permission->id, ['permission_state' => 'inherit']);
+                        $model->user_permissions()->attach($permission->id, ['permission_state' => 2]);
                     }
                 }
 
-            });
-
-            $model->bindEvent('model.afterSave', function() use ($model)
-            {
-                $permissionsInput = $model->getOriginalPurgeValue('userpermissioneditor');
-                if($permissionsInput)
-                {
-                    foreach($permissionsInput as $permissionId => $permissionState)
-                    {
-                        $pivot = $model->user_permissions()->where('id', $permissionId)->first()->pivot;
-                        switch($permissionState)
-                        {
-                            case 'allow':
-                                $pivot->permission_state = 'allow';
-                                break;
-                            case 'inherit':
-                                $pivot->permission_state = 'inherit';
-                                break;
-                            case 'deny':
-                                $pivot->permission_state = 'deny';
-                                break;
-                            default:
-                        }
-                        $pivot->save();
-                    }
-                }
             });
 
             $model->addDynamicMethod('getAllowedPermissions', function() use ($model)
@@ -128,13 +99,13 @@ class Plugin extends \System\Classes\PluginBase
                 }
 
                 $allowed_permissions = $model->user_permissions()
-                    ->where('permission_state', 'allow')->lists('name','id');
+                    ->where('permission_state', 1)->lists('name','id');
                 if(!$allowed_permissions)
                 {
                     $allowed_permissions = [];
                 }
                 $inherit_permissions = $model->user_permissions()
-                    ->where('permission_state', 'inherit')->lists('name','id');
+                    ->where('permission_state', 2)->lists('name','id');
                 if(!$inherit_permissions)
                 {
                     $inherit_permissions = [];
@@ -149,7 +120,7 @@ class Plugin extends \System\Classes\PluginBase
                         foreach($groups as $group)
                         {
                             $group_allowed_permissions = $group->user_permissions()
-                                ->where('permission_state', 'allow')->lists('name','id');
+                                ->where('permission_state', 1)->lists('name','id');
                             $groups_allowed_permissions = array_merge($groups_allowed_permissions,
                                 array_diff($group_allowed_permissions, $groups_allowed_permissions));
                         }
@@ -226,8 +197,6 @@ class Plugin extends \System\Classes\PluginBase
     {
         UserGroupModel::extend(function($model)
         {
-            $model->implement[] = 'JBonnyDev.UserPermissions.Behaviors.Purgeable';
-            $model->addDynamicProperty('purgeable', ['userpermissioneditor','purgeable']);
             $model->belongsToMany['user_permissions'] = ['JBonnyDev\UserPermissions\Models\Permission',
                 'table' => 'jbonnydev_userpermissions_group_permission',
                 'key' => 'group_id',
@@ -243,30 +212,7 @@ class Plugin extends \System\Classes\PluginBase
                 {
                     foreach($permissions as $permission)
                     {
-                        $model->user_permissions()->attach($permission->id, ['permission_state' => 'deny']);
-                    }
-                }
-            });
-
-            $model->bindEvent('model.afterSave', function() use ($model)
-            {
-                $permissionsInput = $model->getOriginalPurgeValue('userpermissioneditor');
-                if($permissionsInput)
-                {
-                    foreach($permissionsInput as $permissionId => $permissionState)
-                    {
-                        $pivot = $model->user_permissions()->where('id', $permissionId)->first()->pivot;
-                        switch($permissionState)
-                        {
-                            case 'allow':
-                                $pivot->permission_state = 'allow';
-                                break;
-                            case 'deny':
-                                $pivot->permission_state = 'deny';
-                                break;
-                            default:
-                        }
-                        $pivot->save();
+                        $model->user_permissions()->attach($permission->id);
                     }
                 }
             });
@@ -292,7 +238,7 @@ class Plugin extends \System\Classes\PluginBase
 
 
             $widget->addTabFields([
-                'userpermissioneditor' => [
+                'user_permissions' => [
                     'tab' => 'Permissions',
                     'label'   => 'jbonnydev.userpermissions::lang.permissions.menu_label',
                     'type'    => 'userpermissioneditor',
@@ -321,7 +267,7 @@ class Plugin extends \System\Classes\PluginBase
 
 
             $widget->addTabFields([
-                'userpermissioneditor' => [
+                'user_permissions' => [
                     'tab' => 'Permissions',
                     'label'   => 'jbonnydev.userpermissions::lang.permissions.menu_label',
                     'type'    => 'userpermissioneditor',

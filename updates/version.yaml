@@ -1,3 +1,5 @@
 1.0.1:
     - Development version
     - create_tables.php
+1.0.2:
+    - !!! Various optimization changes, this update is not compatible with previous versions.

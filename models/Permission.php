@@ -26,14 +26,12 @@ class Permission extends Model
             'key' => 'permission_id',
             'otherKey' => 'group_id',
             'timestamps' => true,
-            'pivot' => ['permission_state'],
         ],
     ];
 
     public function afterCreate()
     {
         $this->addNewPermissionToUsers();
-        $this->addNewPermissionToUserGroups();
     }
 
     protected function addNewPermissionToUsers()
@@ -43,21 +41,8 @@ class Permission extends Model
         {
             foreach($users as $user)
             {
-                $user->user_permissions()->attach($this->id, ['permission_state' => 'inherit']);
+                $user->user_permissions()->attach($this->id, ['permission_state' => 2]);
             }
         }
     }
-
-    protected function addNewPermissionToUserGroups()
-    {
-        $usergroups = UserGroupModel::all();
-        if($usergroups)
-        {
-            foreach($usergroups as $usergroup)
-            {
-                $usergroup->user_permissions()->attach($this->id, ['permission_state' => 'deny']);
-            }
-        }
-    }
-
 }

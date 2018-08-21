@@ -21,13 +21,13 @@
                     if (!$checkboxMode) {
                         $permissionValue = array_key_exists($permission->id, $permissionsData)
                             ? $permissionsData[$permission->id]
-                            : 'inherit';
+                            : 0;
                     }
                     else {
                       $isChecked = false;
                        if(array_key_exists($permission->id, $permissionsData))
                        {
-                           if($permissionsData[$permission->id] === 'allow')
+                           if($permissionsData[$permission->id] === 1)
                            {
                                $isChecked = true;
                            }
@@ -41,7 +41,7 @@
                 <tr class="
                         <?= $checkboxMode ? 'mode-checkbox' : 'mode-radio' ?>
                         <?= $checkboxMode && !$isChecked ? 'disabled' : '' ?>
-                        <?= !$checkboxMode && $permissionValue == 'deny' ? 'disabled' : '' ?>
+                        <?= !$checkboxMode && $permissionValue == 0 ? 'disabled' : '' ?>
                     ">
                     <td class="permission-name">
                         <?= e(trans($permission->name)) ?>
@@ -53,9 +53,9 @@
                                  <input
                                     id="<?= 'permission-'.$globalIndex.'-allow' ?>"
                                     name="<?= e($baseFieldName) ?>[<?= e($permission->id) ?>]"
-                                    value="allow"
+                                    value="1"
                                     type="radio"
-                                    <?= $permissionValue == 'allow' ? 'checked="checked"' : '' ?>
+                                    <?= $permissionValue == 1 ? 'checked="checked"' : '' ?>
                                     data-radio-color="green"
                                 >
 
@@ -63,15 +63,10 @@
                             </div>
                         <?php else: ?>
                             <div class="checkbox custom-checkbox">
-                                <input
-                                    name="<?= e($baseFieldName) ?>[<?= e($permission->id) ?>]"
-                                    value="deny"
-                                    type="hidden"
-                                 >
                                  <input
                                     id="<?= 'permission-'.$globalIndex.'-allow' ?>"
                                     name="<?= e($baseFieldName) ?>[<?= e($permission->id) ?>]"
-                                    value="allow"
+                                    value="1"
                                     type="checkbox"
                                     <?= $isChecked ? 'checked="checked"' : '' ?>
                                  >
@@ -87,8 +82,8 @@
                                  <input
                                     id="<?= 'permission-'.$globalIndex.'-inherit' ?>"
                                     name="<?= e($baseFieldName) ?>[<?= e($permission->id) ?>]"
-                                    value="inherit"
-                                    <?= $permissionValue == 'inherit' ? 'checked="checked"' : '' ?>
+                                    value="2"
+                                    <?= $permissionValue == 2 ? 'checked="checked"' : '' ?>
                                     type="radio"
                                 >
 
@@ -100,8 +95,8 @@
                                  <input
                                     id="<?= 'permission-'.$globalIndex.'-deny' ?>"
                                     name="<?= e($baseFieldName) ?>[<?= e($permission->id) ?>]"
-                                    value="deny"
-                                    <?= $permissionValue == 'deny' ? 'checked="checked"' : '' ?>
+                                    value="0"
+                                    <?= $permissionValue == 0 ? 'checked="checked"' : '' ?>
                                     type="radio"
                                     data-radio-color="red"
                                 >
