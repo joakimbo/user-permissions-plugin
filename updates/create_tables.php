@@ -21,7 +21,7 @@ class CreateTables extends Migration
             $table->engine = 'InnoDB';
             $table->integer('user_id')->unsigned();
             $table->integer('permission_id')->unsigned();
-            $table->enum('permission_state', ['allow', 'inherit', 'deny']);
+            $table->tinyInteger('permission_state');
             $table->primary(['user_id', 'permission_id'], 'user_permission_id');
             $table->timestamps();
         });
@@ -31,7 +31,7 @@ class CreateTables extends Migration
             $table->engine = 'InnoDB';
             $table->integer('group_id')->unsigned();
             $table->integer('permission_id')->unsigned();
-            $table->enum('permission_state', ['allow', 'deny']);
+            $table->tinyInteger('permission_state');
             $table->primary(['group_id', 'permission_id'], 'group_permission_id');
             $table->timestamps();
         });

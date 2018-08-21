@@ -49,11 +49,15 @@ class UserPermissionEditor extends FormWidgetBase
      */
     public function getSaveValue($value)
     {
-        if ($this->user->isSuperUser()) {
-            return is_array($value) ? $value : [];
+        $result = [];
+        if(isset($value)) {
+            foreach($value as $permissionId => $permissionState) {
+                if($permissionState != 0) {
+                    $result[$permissionId] = ['permission_state' => $permissionState];
+                }
+            }
         }
-
-        return $value;
+        return $result;
     }
     /**
      * @inheritDoc
@@ -75,10 +79,6 @@ class UserPermissionEditor extends FormWidgetBase
     protected function getFilteredPermissions()
     {
         $permissions = PermissionModel::all();
-        if ($this->user->isSuperUser()) {
-            return $permissions;
-        }
-
         return $permissions;
     }
 }
