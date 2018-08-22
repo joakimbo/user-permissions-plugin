@@ -1,12 +1,15 @@
 <?php namespace JBonnyDev\UserPermissions\FormWidgets;
 
 use Backend\Classes\FormWidgetBase;
-use BackendAuth;
 use JBonnyDev\UserPermissions\Models\Permission as PermissionModel;
-
+/*
+ * This is a modified version of the OctoberCMS backend permissions editor, see
+ * the original file here:
+ * https://github.com/octobercms/october/blob/master/modules/backend/formwidgets/PermissionEditor.php
+ *
+ */
 class UserPermissionEditor extends FormWidgetBase
 {
-    protected $user;
     public $mode;
     /**
      * @inheritDoc
@@ -16,7 +19,6 @@ class UserPermissionEditor extends FormWidgetBase
         $this->fillFromConfig([
             'mode'
         ]);
-        $this->user = BackendAuth::getUser();
     }
     /**
      * @inheritDoc

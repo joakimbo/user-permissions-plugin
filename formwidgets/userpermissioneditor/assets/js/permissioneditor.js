@@ -1,4 +1,7 @@
 +function ($) { "use strict";
+/* Part of OctoberCMS backend permission editor, see original file here:
+ * https://github.com/octobercms/october/blob/master/modules/backend/formwidgets/permissioneditor/assets/js/permissioneditor.js
+ */
 
     var Base = $.oc.foundation.base,
         BaseProto = Base.prototype
