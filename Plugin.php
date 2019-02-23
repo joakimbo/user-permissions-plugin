@@ -6,6 +6,7 @@ use Backend;
 use JBonnyDev\UserPermissions\Models\Permission as PermissionModel;
 use Rainlab\User\Models\User as UserModel;
 use Rainlab\User\Models\UserGroup as UserGroupModel;
+use October\Rain\Exception\ApplicationException;
 
 class Plugin extends \System\Classes\PluginBase
 {
@@ -91,105 +92,93 @@ class Plugin extends \System\Classes\PluginBase
 
             });
 
-            $model->addDynamicMethod('getAllowedPermissions', function() use ($model)
+            $model->addDynamicMethod('hasUserPermission', function($permissions, $match = 'all') use ($model)
             {
-                if(!$model->is_activated)
-                {
-                    return [];
+                if (!is_string($match) || $match != 'all' && $match != 'one') {
+                    throw new ApplicationException('second parameter of hasUserPermission() must be of type string with a value of "all" or "one"!');
                 }
 
-                $allowed_permissions = $model->user_permissions()
-                    ->where('permission_state', 1)->lists('name','id');
-                if(!$allowed_permissions)
-                {
-                    $allowed_permissions = [];
-                }
-                $inherit_permissions = $model->user_permissions()
-                    ->where('permission_state', 2)->lists('name','id');
-                if(!$inherit_permissions)
-                {
-                    $inherit_permissions = [];
-                }
+                function getAllowedPermissions($model) {
+                    if(!$model->is_activated) {
+                        return [];
+                    }
 
-                if($inherit_permissions)
-                {
-                    $groups = $model->groups;
-                    if($groups)
-                    {
-                        $groups_allowed_permissions = [];
-                        foreach($groups as $group)
-                        {
-                            $group_allowed_permissions = $group->user_permissions()
-                                ->where('permission_state', 1)->lists('name','id');
-                            $groups_allowed_permissions = array_merge($groups_allowed_permissions,
-                                array_diff($group_allowed_permissions, $groups_allowed_permissions));
-                        }
-                        $inherited_allowed_permissions = array_intersect($inherit_permissions,
-                                                                         $groups_allowed_permissions);
-                        if($inherited_allowed_permissions)
-                        {
-                            foreach($inherited_allowed_permissions as $permissionId => $permissionName)
-                            {
-                                $allowed_permissions[$permissionId] = $permissionName;
+                    $allowedPermissions = $model->user_permissions()
+                        ->where('permission_state', 1)->lists('name','id');
+                    if(!$allowedPermissions) {
+                        $allowedPermissions = [];
+                    }
+
+                    $inheritPermissions = $model->user_permissions()
+                        ->where('permission_state', 2)->lists('name','id');
+                    if(!$inheritPermissions) {
+                        $inheritPermissions = [];
+                    }
+
+                    if($inheritPermissions) {
+                        $groups = $model->groups;
+                        if($groups) {
+                            $groupsAllowedPermissions = [];
+                            foreach($groups as $group) {
+                                $groupAllowedPermissions = $group->user_permissions()
+                                    ->where('permission_state', 1)->lists('name','id');
+                                $groupsAllowedPermissions = array_merge($groupsAllowedPermissions,
+                                    array_diff($groupAllowedPermissions, $groupsAllowedPermissions));
+                            }
+                            $inheritedAllowedPermissions = array_intersect($inheritPermissions,
+                                                                            $groupsAllowedPermissions);
+                            if($inheritedAllowedPermissions) {
+                                foreach($inheritedAllowedPermissions as $permissionId => $permissionName) {
+                                    $allowedPermissions[$permissionId] = $permissionName;
+                                }
                             }
                         }
                     }
+                    return $allowedPermissions;
                 }
-                return $allowed_permissions;
-            });
+                function hasUserpermissionWithName($permissionName, $model) {
+                    $allowedPermissions = getAllowedPermissions($model);
+                    if (in_array($permissionName, $allowedPermissions)) {
+                        return true;
+                    }
+                    return false;
+                }
 
-            $model->addDynamicMethod('hasUserPermissionWithName', function($permissionName) use ($model)
-            {
-                return $model->hasUserPermissionsWithNames([$permissionName]);
-            });
+                function hasUserpermissionWithId($permissionId, $model) {
+                    $allowedPermissions = getAllowedPermissions($model);
+                    if (array_key_exists($permissionId, $allowedPermissions)) {
+                        return true;
+                    }
+                    return false;
+                }
 
-            $model->addDynamicMethod('hasUserPermissionsWithNames', function(array $permissionNames) use ($model)
-            {
-                foreach($permissionNames as $permissionName)
-                {
-                    if(!is_string($permissionName))
-                    {
-                        return false;
+                if (!is_array($permissions)) {
+                    $permissions = [$permissions];
+                }
+                $permissions = array_filter($permissions, function ($element) {
+                    if (is_string($element) || is_int($element)) {
+                        return true;
+                    }
+                    return false;
+                });
+                $count = count($permissions);
+                if (is_array($permissions) && $count > 0) {
+                    $result = [];
+                    foreach ($permissions as $permission) {
+                        if (is_string($permission)) {
+                            $result[] = hasUserPermissionWithName($permission, $model);
+                        } else {
+                            $result[] = hasUserPermissionWithId($permission, $model);
+                        }
+                    }
+                    if ($match == 'all') {
+                        return !in_array(false, $result);
+                    } elseif($match == 'one') {
+                        return in_array(true, $result);
                     }
                 }
-                $allowed_permissions = $model->getAllowedPermissions();
-                $hasAllPermissions = true;
-                foreach($permissionNames as $permissionName)
-                {
-                    if(!in_array($permissionName, $allowed_permissions))
-                    {
-                        $hasAllPermissions = false;
-                    }
-                }
-                return $hasAllPermissions;
+                return false;
             });
-
-            $model->addDynamicMethod('hasUserPermissionWithId', function($permissionId) use ($model)
-            {
-                return $model->hasUserPermissionsWithIds([$permissionId]);
-            });
-
-            $model->addDynamicMethod('hasUserPermissionsWithIds', function(array $permissionIds) use ($model)
-            {
-                foreach($permissionIds as $permissionId)
-                {
-                    if(!is_int($permissionId))
-                    {
-                        return false;
-                    }
-                }
-                $allowed_permissions = $model->getAllowedPermissions();
-                $hasAllPermissions = true;
-                foreach($permissionIds as $permissionId)
-                {
-                    if(!array_key_exists($permissionId, $allowed_permissions))
-                    {
-                        $hasAllPermissions = false;
-                    }
-                }
-                return $hasAllPermissions;
-            });
-
         });
     }
 

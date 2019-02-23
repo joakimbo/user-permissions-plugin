@@ -2,12 +2,18 @@
 #  List Behavior Config
 # ===================================
 
-title: Permissions
+title: jbonnydev.userpermissions::lang.permissions.menu_label
 list: ~/plugins/jbonnydev/userpermissions/models/permission/columns.yaml
 modelClass: JBonnyDev\UserPermissions\Models\Permission
 recordUrl: jbonnydev/userpermissions/permissions/update/:id
 
+noRecordsMessage: backend::lang.list.no_records
+
+recordsPerPage: 20
+
+showSetup: true
+
 toolbar:
     buttons: list_toolbar
     search:
-        prompt: Find records
+        prompt: backend::lang.list.search_prompt

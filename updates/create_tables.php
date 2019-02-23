@@ -10,7 +10,7 @@ class CreateTables extends Migration
         Schema::create('jbonnydev_userpermissions_permissions', function($table)
         {
             $table->engine = 'InnoDB';
-            $table->increments('id')->unsigned;
+            $table->increments('id');
             $table->string('name')->nullable();
             $table->string('description')->nullable();
             $table->timestamps();

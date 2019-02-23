@@ -13,8 +13,6 @@ https://github.com/octobercms/october/blob/master/modules/backend/formwidgets/pe
                     <th class="permission-type"><?= e(trans('backend::lang.user.inherit')) ?></th>
                     <th class="permission-type"><?= e(trans('backend::lang.user.deny')) ?></th>
                 <?php endif ?>
-
-                <th></th>
             </tr>
             <?php foreach ($permissions as $permission): ?>
                 <?php
@@ -47,7 +45,6 @@ https://github.com/octobercms/october/blob/master/modules/backend/formwidgets/pe
                     ">
                     <td class="permission-name">
                         <?= e(trans($permission->name)) ?>
-                        <p class="comment"><?= e(trans($permission->description)) ?></p>
                     </td>
                     <td class="permission-value">
                         <?php if (!$checkboxMode): ?>
@@ -107,8 +104,11 @@ https://github.com/octobercms/october/blob/master/modules/backend/formwidgets/pe
                             </div>
                         </td>
                     <?php endif ?>
-
-                    <td></td>
+                </tr>
+                <tr class="comment">
+                    <td colspan="4">
+                        <p><?= e(trans($permission->description)) ?></p>
+                    </td>
                 </tr>
             <?php endforeach ?>
     </table>

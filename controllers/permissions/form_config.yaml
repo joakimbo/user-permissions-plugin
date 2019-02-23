@@ -17,6 +17,6 @@ update:
     redirectClose: jbonnydev/userpermissions/permissions
 
 preview:
-    title: View Permission
+    title: jbonnydev.userpermissions::lang.permissions.view_permission
 
 defaultRedirect: jbonnydev/userpermissions/permissions

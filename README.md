@@ -37,32 +37,39 @@ permissions you want this group to have.
 ## Using UserPermissions in your own development
 
 Available UserPermissions functions:
-- hasUserPermissionWithName = function (string $permissionName)
-- hasUserPermissionsWithNames = function (array $permissionName)
-- hasUserPermissionWithId   = function (int $permissionId)
-- hasUserPermissionsWithIds  = function (array $permissionIds)
+- hasUserPermission = function ($permission, $match = 'all') // $match can be either 'all' or 'one', defaults to 'all'
+    This function can handle the $permission parameter being either a int of a permission id, a string of a permission
+    name or an array consisting of ids, names or a mix of both.
+    By using the second parameter ($match) you can decide if 'all' supplied permissions should
+    be matched or if 'one' match is enough.
 
-NOTE: If incorrect types are sent into these functions, say a int for hasUserPermissionWithName, the function will
-behave as if the user does not have the permission.
-
-Since every user model is extended with the same functions they are available in both twig and backend php i.e.
+Since every user model is extended with the same function it is available in both twig and backend php i.e.
 
 **For Twig**
 
-    {% if user.hasUserPermissionWithName("can eat cake") %}
-        <p>This user has permission</p>
+    {% if user.hasUserPermission([1, 2, "can eat cake"]) %}
+        <p>This user has all above permissions</p>
+    {% else %}
+        <p>This user does not have permission</p>
+    {% endif %}
+
+    {% if user.hasUserPermission([1, 2, "can eat cake"], 'one') %}
+        <p>This user has one of the above permissions</p>
     {% else %}
         <p>This user does not have permission</p>
     {% endif %}
 
 **For Backend**
 
-    if($user->hasUserPermissionWithName("can eat cake"))
-    {
-        // This user has permission
+    if($user->hasUserPermission([1, 2, "can eat cake"])) {
+        // This user has all above permissions
+    } else {
+        // This user does not have permission
     }
-    else
-    {
+
+    if($user->hasUserPermission([1, 2, "can eat cake"], 'one')) {
+        // This user has one of the above permissions
+    } else {
         // This user does not have permission
     }
 

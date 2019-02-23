@@ -1,0 +1,34 @@
+.form-id, .form-name, .form-desc {
+    position: relative;
+    width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+}
+
+textarea {
+    resize: none !important;
+    height: 240px !important;
+}
+
+@media (min-width: 576px) {
+    textarea {
+        height: 120px !important;
+    }
+}
+@media (min-width: 768px) {
+    .form-id {
+      -ms-flex: 0 0 20%;
+      flex: 0 0 20%;
+      max-width: 20%;
+    }
+    .form-name {
+      -ms-flex: 0 0 80%;
+      flex: 0 0 80%;
+      max-width: 80%;
+    }
+    .form-desc {
+      -ms-flex: 0 0 100%;
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+}

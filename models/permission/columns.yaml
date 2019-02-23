@@ -3,5 +3,16 @@
 # ===================================
 
 columns:
-    name: jbonnydev.userpermissions::lang.permission.model_name
-    description: jbonnydev.userpermissions::lang.permission.model_desc
+    id:
+        label: jbonnydev.userpermissions::lang.permission.model_id
+        type: text
+        searchable: true
+    name:
+        label: jbonnydev.userpermissions::lang.permission.model_name
+        type: text
+        width: 50%
+        searchable: true
+    description:
+        label: jbonnydev.userpermissions::lang.permission.model_desc
+        type: text
+        width: 50%

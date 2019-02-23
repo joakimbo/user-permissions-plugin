@@ -18,7 +18,7 @@ class Permissions extends \Backend\Classes\Controller
     public function __construct()
     {
         parent::__construct();
-
         BackendMenu::setContext('RainLab.User', 'user', 'permissions');
+        $this->addCss('/plugins/JBonnyDev/userpermissions/assets/css/form.css');
     }
 }
