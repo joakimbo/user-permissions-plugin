@@ -1,10 +1,22 @@
-/*
- * Part of OctoberCMS backend permission editor, see original file here:
- * https://github.com/octobercms/october/blob/master/modules/backend/formwidgets/permissioneditor/assets/css/permissioneditor.css
+/* new permission editor css
+ * ideas used from both OctoberCMS source code and other online sources ex.
+ * http://adrianroselli.com/2017/05/under-engineered-custom-radio-buttons-and-checkboxen.html
+ * https://www.w3schools.com/howto/howto_css_switch.asp
  */
+
+@import './radio-button.css';
+@import './checkbox-slider.css';
+
 .permissioneditor {
+    font-size: 14px;
     position: relative;
     margin: 0 -20px;
+}
+
+.permissioneditor.control-disabled {
+    pointer-events: none;
+    opacity: 0.5;
+    filter: alpha(opacity=50);
 }
 
 .permissioneditor.control-disabled .permissions-overlay {
@@ -17,126 +29,36 @@
     cursor: not-allowed;
 }
 
-.permissioneditor.control-disabled table {
-    opacity: 0.5;
-    filter: alpha(opacity=50);
+.permission-row {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    align-items: center;
+    padding: 0 2rem;
 }
 
-.permissioneditor table {
-    width: 100%;
+.permission-row:hover:not(:first-child) {
+    background: #4da7e8;
+    color: white;
 }
 
-.permissioneditor table th {
-    padding: 30px 4px 8px 4px;
-    color: #2a3e51;
-    font-weight: normal;
-    border-bottom: 1px solid #dbe1e3;
+.permission-row .permission-name:hover {
+    cursor: pointer;
 }
 
-.permissioneditor table th.tab {
-    font-size: 13px;
+.permission-row .permission-value-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    padding: 1rem .5rem;
 }
 
-.permissioneditor table th.permission-type {
+.permissioneditor .permission-value-grid .permission-type {
     text-transform: uppercase;
     font-size: 11px;
     text-align: center;
 }
 
-.permissioneditor table td {
-    padding: 10px 4px;
-    vertical-align: top;
-    border-bottom: 1px solid #ecf0f1;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
-.permissioneditor table td.permission-value {
-    text-align: center;
-}
-
-.permissioneditor table td.permission-name {
-    font-size: 13px;
-    cursor: pointer;
-}
-
-.permissioneditor table tr.comment td {
-    padding-top: 0;
-    padding-bottom: 0;
-}
-
-.permissioneditor table tr.comment td p {
-    margin-bottom: 0;
-    color: #8e8e8e;
-}
-
-.permissioneditor table tr.comment td p:empty {
-    display: none;
-}
-
-.permissioneditor table tr:nth-child(even):hover td {
-    background: #4da7e8;
-}
-
-.permissioneditor table tr:hover td.permission-name {
-    color: #ffffff !important;
-}
-
-.permissioneditor table th:first-child,
-.permissioneditor table td:first-child {
-    padding-left: 20px;
-}
-
-.permissioneditor table th:last-child,
-.permissioneditor table td:last-child {
-    padding-right: 5px;
-}
-
-.permissioneditor table .custom-radio,
-.permissioneditor table .custom-checkbox {
-    display: inline-block;
-    padding-left: 0;
-}
-
-.permissioneditor table .custom-radio,
-.permissioneditor table .custom-checkbox,
-.permissioneditor table .custom-radio label,
-.permissioneditor table .custom-checkbox label {
-    margin-bottom: 0;
-}
-
-.permissioneditor table .custom-radio label,
-.permissioneditor table .custom-checkbox label {
-    padding: 0 0 0 14px;
-    margin: 0;
-    top: 0;
-}
-
-.permissioneditor table .custom-radio label span,
-.permissioneditor table .custom-checkbox label span {
-    text-indent: -10000em;
-    display: block;
-}
-
-.permissioneditor table .custom-radio label:before,
-.permissioneditor table .custom-checkbox label:before {
-    margin-right: 0;
-}
-
-.permissioneditor table tr:last-child td {
-    border-bottom: none;
-}
-
-.permissioneditor table tr:first-child th {
-    padding-top: 0;
-}
-
-.permissioneditor table tr.disabled td.permission-name {
-    color: #AAA;
-}
-
-.permissioneditor table tr.last-section-row td {
-    border-bottom: none;
+@media only screen and (max-width: 576px) {
+    .permission-value-grid {
+        grid-column: 1/3;
+    }
 }

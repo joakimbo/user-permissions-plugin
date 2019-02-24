@@ -1,5 +1,5 @@
 +function ($) { "use strict";
-/* Part of OctoberCMS backend permission editor, see original file here:
+/* This is a modified backend permissions editor file, see original file here:
  * https://github.com/octobercms/october/blob/master/modules/backend/formwidgets/permissioneditor/assets/js/permissioneditor.js
  */
 
@@ -8,7 +8,6 @@
 
     var PermissionEditor = function() {
         Base.call(this)
-
         this.init()
     }
 
@@ -16,7 +15,7 @@
     PermissionEditor.prototype.constructor = PermissionEditor
 
     PermissionEditor.prototype.init = function() {
-        $(document).on('click', '.permissioneditor table td.permission-name',
+        $(document).on('click', '.permissioneditor .permission-row .permission-name',
                        this.proxy(this.onPermissionNameClick))
         $(document).on('click', '.permissioneditor table tr.mode-checkbox input[type=checkbox]',
                        this.proxy(this.onPermissionCheckboxClick))
@@ -28,7 +27,7 @@
     // ============================
 
     PermissionEditor.prototype.onPermissionNameClick = function(ev) {
-        var $row = $(ev.target).closest('tr'),
+        var $row = $(ev.target).next(),
             $checkbox = $row.find('input[type=checkbox]')
 
         if ($checkbox.length) {
@@ -42,7 +41,7 @@
             }
 
             var nextIndex = 0
-            for (var i=2; i>=0; i--) {
+            for (var i = 2; i >= 0; i--) {
                 if ($radios.get(i).checked) {
                     nextIndex = i+1;
                     break
@@ -58,13 +57,13 @@
     }
 
     PermissionEditor.prototype.onPermissionCheckboxClick = function(ev) {
-        var $row = $(ev.target).closest('tr')
+        var $row = $(ev.target).next()
 
         $row.toggleClass('disabled', !ev.target.checked)
     }
 
     PermissionEditor.prototype.onPermissionRadioClick = function(ev) {
-        var $row = $(ev.target).closest('tr')
+        var $row = $(ev.target).next()
 
         $row.toggleClass('disabled', ev.target.value == -1)
     }

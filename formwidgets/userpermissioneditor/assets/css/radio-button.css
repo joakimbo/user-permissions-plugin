@@ -1,0 +1,60 @@
+.permission-radio {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.permission-radio input[type=radio][data-radio-color=green]:checked+label:before {
+    border-color: #80B56C;
+    background-color: #80B56C;
+}
+
+.permission-radio input[type=radio][data-radio-color=blue]:checked+label:before {
+    border-color: #1f99dc;
+    background-color: #1f99dc;
+}
+
+
+.permission-radio input[type=radio][data-radio-color=red]:checked+label:before {
+    border-color: #bb2424;
+    background-color: #bb2424;
+}
+
+.permission-radio label {
+    margin-bottom: 0;
+}
+
+.permission-radio input[type=radio] {
+    position: absolute;
+    top: auto;
+    overflow: hidden;
+    clip: rect(1px 1px 1px 1px);
+    clip: rect(1px, 1px, 1px, 1px);
+    width: 1px;
+    height: 1px;
+    white-space: nowrap;
+}
+
+.permission-radio input[type=radio]+label:before {
+    content: '';
+    background: #fff;
+    border: .2rem solid #d1d6d9;
+    background-color: rgba(255, 255, 255, .8);
+    display: block;
+    box-sizing: border-box;
+    float: left;
+    width: 2rem;
+    height: 2rem;
+    vertical-align: top;
+    cursor: pointer;
+    text-align: center;
+    transition: all .1s ease-out;
+}
+
+.permission-radio input[type=radio]+label:before {
+    border-radius: 100%;
+}
+
+.permission-radio input[type=radio]:checked+label:before {
+    box-shadow: inset 0 0 0 .15rem rgba(255, 255, 255, .95);
+}
