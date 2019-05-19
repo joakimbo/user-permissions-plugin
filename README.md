@@ -38,7 +38,7 @@ permissions you want this group to have.
 Available UserPermissions functions:
 - hasUserPermission = function ($permission, $match = 'all') // $match can be either 'all' or 'one', defaults to 'all'
     This function can handle the $permission parameter being either a int of a permission id, a string of a permission
-    name or an array consisting of ids, names or a mix of both.
+    code or an array consisting of ids, codes or a mix of both.
     By using the second parameter ($match) you can decide if 'all' supplied permissions should
     be matched or if 'one' match is enough.
 
