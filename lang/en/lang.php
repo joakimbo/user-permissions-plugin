@@ -19,6 +19,7 @@ return [
     ],
     'permission' => [
         'model_id' => 'Id',
+        'model_code' => 'Code',
         'model_name' => 'Name',
         'model_desc' => 'Description',
         'delete_permission' => 'Delete Permission',

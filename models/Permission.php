@@ -6,12 +6,20 @@ use Rainlab\User\Models\UserGroup as UserGroupModel;
 
 class Permission extends Model
 {
+    use \October\Rain\Database\Traits\Validation;
     /**
      * The table associated with the model.
      *
      * @var string
      */
     protected $table = 'jbonnydev_userpermissions_permissions';
+
+    /*
+     * Validation
+     */
+    public $rules = [
+        'name' => 'required',
+    ];
 
     public $belongsToMany = [
         'users' => ['Rainlab\User\Models\User',
@@ -28,6 +36,18 @@ class Permission extends Model
             'timestamps' => true,
         ],
     ];
+
+    public function beforeSave()
+    {
+        $this->setCodeIfEmpty();
+    }
+
+    protected function setCodeIfEmpty()
+    {
+        if (empty($this->code)) {
+            $this->code = str_slug($this->name, '-');
+        }
+    }
 
     public function afterCreate()
     {

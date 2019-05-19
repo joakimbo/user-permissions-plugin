@@ -15,8 +15,8 @@
     PermissionEditor.prototype.constructor = PermissionEditor
 
     PermissionEditor.prototype.init = function() {
-        $(document).on('click', '.permissioneditor .permission-row .permission-name',
-                       this.proxy(this.onPermissionNameClick))
+        /* $(document).on('click', '.permissioneditor .permission-row .permission-name',
+                       this.proxy(this.onPermissionNameClick)) */
         $(document).on('click', '.permissioneditor table tr.mode-checkbox input[type=checkbox]',
                        this.proxy(this.onPermissionCheckboxClick))
         $(document).on('click', '.permissioneditor table tr.mode-radio input[type=radio]',

@@ -10,18 +10,26 @@ fields:
         description: Id of the permission
         disabled: true
 
+    code:
+        label: jbonnydev.userpermissions::lang.permission.model_code
+        type: text
+        cssClass: form-code
+        description: Code for the permission
+        attributes:
+            maxlength: 128
+
     name:
         label: jbonnydev.userpermissions::lang.permission.model_name
         type: text
         cssClass: form-name
         description: Name of the permission
+        required: true
         attributes:
             maxlength: 128
 
     description:
         label: jbonnydev.userpermissions::lang.permission.model_desc
         type: textarea
-        size: small
         cssClass: form-desc
         description: Description of the permission
         attributes:
