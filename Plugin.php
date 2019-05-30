@@ -75,65 +75,44 @@ class Plugin extends \System\Classes\PluginBase
                 return [];
             }
 
-            $firstQuery = Db::table('users')
-                ->join('jbonnydev_userpermissions_user_permission', function($join) {
-                    $join->on('users.id', '=', 'jbonnydev_userpermissions_user_permission.user_id')
-                        ->where('jbonnydev_userpermissions_user_permission.permission_state', '=', 2);
-                })
-                ->join('users_groups', 'users.id', '=', 'users_groups.user_id')
-                ->join('user_groups', 'users_groups.user_group_id', '=', 'user_groups.id')
-                ->join('jbonnydev_userpermissions_group_permission', function ($join) {
-                    $join->on('user_groups.id', '=', 'jbonnydev_userpermissions_group_permission.group_id')
-                    ->on(
-                        'jbonnydev_userpermissions_group_permission.permission_id',
-                        '=',
-                        'jbonnydev_userpermissions_user_permission.permission_id'
-                    )
-                    ->where('jbonnydev_userpermissions_group_permission.permission_state', '=', 1);
-                })
-                ->join('jbonnydev_userpermissions_permissions',
+            $groupPermissionsQuery = $model->user_permissions()->where('jbonnydev_userpermissions_user_permission.permission_state', 2)
+            ->join('users_groups', 'jbonnydev_userpermissions_user_permission.user_id', '=', 'users_groups.user_id')
+            ->join('jbonnydev_userpermissions_group_permission', function ($join) {
+                $join->on('users_groups.user_group_id', '=', 'jbonnydev_userpermissions_group_permission.group_id')
+                ->on(
                     'jbonnydev_userpermissions_group_permission.permission_id',
                     '=',
-                    'jbonnydev_userpermissions_permissions.id'
+                    'jbonnydev_userpermissions_user_permission.permission_id'
                 )
-                ->where('users.id', '=', $model['id'])
-                ->select(
-                    'jbonnydev_userpermissions_permissions.id',
-                    'jbonnydev_userpermissions_permissions.code',
-                    'jbonnydev_userpermissions_permissions.name'
-                );
+                ->where('jbonnydev_userpermissions_group_permission.permission_state', '=', 1);
+            })
+            ->join('jbonnydev_userpermissions_permissions as permissions',
+                'jbonnydev_userpermissions_group_permission.permission_id',
+                '=',
+                'permissions.id'
+            )->select(
+                'permissions.id',
+                'permissions.code',
+                'jbonnydev_userpermissions_user_permission.user_id',
+                'jbonnydev_userpermissions_user_permission.permission_id',
+                'jbonnydev_userpermissions_user_permission.permission_state',
+                'jbonnydev_userpermissions_user_permission.created_at',
+                'jbonnydev_userpermissions_user_permission.updated_at');
 
-            $permissionsResult = Db::table('users')
-                ->join('jbonnydev_userpermissions_user_permission', function($join) {
-                    $join->on('users.id', '=', 'jbonnydev_userpermissions_user_permission.user_id')
-                        ->where('jbonnydev_userpermissions_user_permission.permission_state', '=', 1);
-                })
-                ->join('jbonnydev_userpermissions_permissions',
-                    'jbonnydev_userpermissions_user_permission.permission_id',
-                    '=',
-                    'jbonnydev_userpermissions_permissions.id'
-                )
-                ->where('users.id', '=', $model['id'])
-                ->select(
-                    'jbonnydev_userpermissions_permissions.id',
-                    'jbonnydev_userpermissions_permissions.code',
-                    'jbonnydev_userpermissions_permissions.name'
-                )
-                ->union($firstQuery)
-                ->get();
+            $permissionsQueryResult = $model->user_permissions()->select('id', 'code')->where('permission_state', 1)->union($groupPermissionsQuery)->get();
 
-            if(!$permissionsResult) {
-                $permissionsResult = [];
+            if(!$permissionsQueryResult) {
+                $permissionsQueryResult = [];
             } else {
-                $permissionsResult = $permissionsResult->toArray();
+                $permissionsQueryResult = $permissionsQueryResult->toArray();
             }
-            return $permissionsResult;
+            return $permissionsQueryResult;
         }
 
-        function hasUserPermission($permissionInput, $column, $allowedPermissionsCollection) {
-            if (is_array($allowedPermissionsCollection) && count($allowedPermissionsCollection) > 0) {
-                foreach ($allowedPermissionsCollection as $permission) {
-                    if ($permission->{$column} == $permissionInput) {
+        function hasUserPermission($permissionInput, $column, $allowedPermissions) {
+            if (is_array($allowedPermissions) && count($allowedPermissions) > 0) {
+                foreach ($allowedPermissions as $permission) {
+                    if ($permission[$column] == $permissionInput) {
                         return true;
                     }
                 }
