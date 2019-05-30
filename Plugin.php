@@ -8,7 +8,6 @@ use Rainlab\User\Models\User as UserModel;
 use Rainlab\User\Models\UserGroup as UserGroupModel;
 use October\Rain\Exception\ApplicationException;
 use Illuminate\Support\Facades\DB as Db;
-use Debugbar;
 
 class Plugin extends \System\Classes\PluginBase
 {
@@ -71,6 +70,90 @@ class Plugin extends \System\Classes\PluginBase
 
     protected function extendUserModel()
     {
+        function getAllowedPermissions($model) {
+            if(!$model->is_activated) {
+                return [];
+            }
+
+            $firstQuery = Db::table('users')
+                ->join('jbonnydev_userpermissions_user_permission', function($join) {
+                    $join->on('users.id', '=', 'jbonnydev_userpermissions_user_permission.user_id')
+                        ->where('jbonnydev_userpermissions_user_permission.permission_state', '=', 2);
+                })
+                ->join('users_groups', 'users.id', '=', 'users_groups.user_id')
+                ->join('user_groups', 'users_groups.user_group_id', '=', 'user_groups.id')
+                ->join('jbonnydev_userpermissions_group_permission', function ($join) {
+                    $join->on('user_groups.id', '=', 'jbonnydev_userpermissions_group_permission.group_id')
+                    ->on(
+                        'jbonnydev_userpermissions_group_permission.permission_id',
+                        '=',
+                        'jbonnydev_userpermissions_user_permission.permission_id'
+                    )
+                    ->where('jbonnydev_userpermissions_group_permission.permission_state', '=', 1);
+                })
+                ->join('jbonnydev_userpermissions_permissions',
+                    'jbonnydev_userpermissions_group_permission.permission_id',
+                    '=',
+                    'jbonnydev_userpermissions_permissions.id'
+                )
+                ->where('users.id', '=', $model['id'])
+                ->select(
+                    'jbonnydev_userpermissions_permissions.id',
+                    'jbonnydev_userpermissions_permissions.code',
+                    'jbonnydev_userpermissions_permissions.name'
+                );
+
+            $permissionsResult = Db::table('users')
+                ->join('jbonnydev_userpermissions_user_permission', function($join) {
+                    $join->on('users.id', '=', 'jbonnydev_userpermissions_user_permission.user_id')
+                        ->where('jbonnydev_userpermissions_user_permission.permission_state', '=', 1);
+                })
+                ->join('jbonnydev_userpermissions_permissions',
+                    'jbonnydev_userpermissions_user_permission.permission_id',
+                    '=',
+                    'jbonnydev_userpermissions_permissions.id'
+                )
+                ->where('users.id', '=', $model['id'])
+                ->select(
+                    'jbonnydev_userpermissions_permissions.id',
+                    'jbonnydev_userpermissions_permissions.code',
+                    'jbonnydev_userpermissions_permissions.name'
+                )
+                ->union($firstQuery)
+                ->get();
+
+            if(!$permissionsResult) {
+                $permissionsResult = [];
+            } else {
+                $permissionsResult = $permissionsResult->toArray();
+            }
+            return $permissionsResult;
+        }
+
+        function hasUserPermission($permissionInput, $column, $allowedPermissionsCollection) {
+            if (is_array($allowedPermissionsCollection) && count($allowedPermissionsCollection) > 0) {
+                foreach ($allowedPermissionsCollection as $permission) {
+                    if ($permission->{$column} == $permissionInput) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        function normalizePermissionInput($permissions) {
+            if (!is_array($permissions)) {
+                $permissions = [$permissions];
+            }
+            $permissions = array_filter($permissions, function ($element) {
+                if (is_string($element) || is_int($element)) {
+                    return true;
+                }
+                return false;
+            });
+            return $permissions;
+        }
+
         UserModel::extend(function($model)
         {
             $model->belongsToMany['user_permissions'] = [
@@ -101,96 +184,10 @@ class Plugin extends \System\Classes\PluginBase
                     throw new ApplicationException('second parameter of hasUserPermission() must be of type string with a value of "all" or "one"!');
                 }
 
-                function getAllowedPermissions($model) {
-                    if(!$model->is_activated) {
-                        return [];
-                    }
-
-                    $firstQuery = Db::table('users')
-                        ->join('jbonnydev_userpermissions_user_permission', function($join) {
-                            $join->on('users.id', '=', 'jbonnydev_userpermissions_user_permission.user_id')
-                                ->where('jbonnydev_userpermissions_user_permission.permission_state', '=', 2);
-                        })
-                        ->join('users_groups', 'users.id', '=', 'users_groups.user_id')
-                        ->join('user_groups', 'users_groups.user_group_id', '=', 'user_groups.id')
-                        ->join('jbonnydev_userpermissions_group_permission', function ($join) {
-                            $join->on('user_groups.id', '=', 'jbonnydev_userpermissions_group_permission.group_id')
-                            ->on(
-                                'jbonnydev_userpermissions_group_permission.permission_id',
-                                '=',
-                                'jbonnydev_userpermissions_user_permission.permission_id'
-                            )
-                            ->where('jbonnydev_userpermissions_group_permission.permission_state', '=', 1);
-                        })
-                        ->join('jbonnydev_userpermissions_permissions',
-                            'jbonnydev_userpermissions_group_permission.permission_id',
-                            '=',
-                            'jbonnydev_userpermissions_permissions.id'
-                        )
-                        ->where('users.id', '=', $model['id'])
-                        ->select(
-                            'jbonnydev_userpermissions_permissions.id',
-                            'jbonnydev_userpermissions_permissions.code',
-                            'jbonnydev_userpermissions_permissions.name'
-                        );
-
-                    $permissionsResult = Db::table('users')
-                        ->join('jbonnydev_userpermissions_user_permission', function($join) {
-                            $join->on('users.id', '=', 'jbonnydev_userpermissions_user_permission.user_id')
-                                ->where('jbonnydev_userpermissions_user_permission.permission_state', '=', 1);
-                        })
-                        ->join('jbonnydev_userpermissions_permissions',
-                            'jbonnydev_userpermissions_user_permission.permission_id',
-                            '=',
-                            'jbonnydev_userpermissions_permissions.id'
-                        )
-                        ->where('users.id', '=', $model['id'])
-                        ->select(
-                            'jbonnydev_userpermissions_permissions.id',
-                            'jbonnydev_userpermissions_permissions.code',
-                            'jbonnydev_userpermissions_permissions.name'
-                        )
-                        ->union($firstQuery)
-                        ->get();
-
-                    if(!$permissionsResult) {
-                        $permissionsResult = [];
-                    } else {
-                        $permissionsResult = $permissionsResult->toArray();
-                    }
-                    return $permissionsResult;
-                }
-
-                function hasUserPermission($permissionInput, $column, $allowedPermissionsCollection) {
-                    if (is_array($allowedPermissionsCollection) && count($allowedPermissionsCollection) > 0) {
-                        foreach ($allowedPermissionsCollection as $permission) {
-                            if ($permission->{$column} == $permissionInput) {
-                                return true;
-                            }
-                        }
-                    }
-                    return false;
-                }
-
-                function normalizePermissionInput($permissions) {
-                    if (!is_array($permissions)) {
-                        $permissions = [$permissions];
-                    }
-                    $permissions = array_filter($permissions, function ($element) {
-                        if (is_string($element) || is_int($element)) {
-                            return true;
-                        }
-                        return false;
-                    });
-                    return $permissions;
-                }
-
-
                 $permissionsInput = normalizePermissionInput($permissionsInput);
                 if (is_array($permissionsInput) && count($permissionsInput) > 0) {
                     $result = [];
                     $allowedPermissions = getAllowedPermissions($model);
-                    Debugbar::info($allowedPermissions);
                     foreach ($permissionsInput as $permissionInput) {
                         if (is_string($permissionInput)) {
                             $result[] = hasUserPermission($permissionInput, 'code', $allowedPermissions);
