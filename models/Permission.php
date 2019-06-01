@@ -40,6 +40,7 @@ class Permission extends Model
     public function beforeSave()
     {
         $this->setCodeIfEmpty();
+        $this->sluggifyCode();
     }
 
     protected function setCodeIfEmpty()
@@ -47,6 +48,11 @@ class Permission extends Model
         if (empty($this->code)) {
             $this->code = str_slug($this->name, '-');
         }
+    }
+
+    protected function sluggifyCode()
+    {
+        $this->code = str_slug($this->code, '-');
     }
 
     public function afterCreate()
@@ -57,10 +63,8 @@ class Permission extends Model
     protected function addNewPermissionToUsers()
     {
         $users = UserModel::all();
-        if($users)
-        {
-            foreach($users as $user)
-            {
+        if($users) {
+            foreach($users as $user) {
                 $user->user_permissions()->attach($this->id, ['permission_state' => 2]);
             }
         }

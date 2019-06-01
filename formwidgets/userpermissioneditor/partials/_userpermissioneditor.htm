@@ -43,7 +43,7 @@ https://github.com/octobercms/october/blob/master/modules/backend/formwidgets/pe
             ?>
         <div class="permission-row">
             <div class="permission-name">
-                <?= e(trans($permission->name)) ?>
+                <?php echo e(trans($permission->name)).' ('.e($permission->code).')' ?>
             </div>
             <div class="permission-value-grid">
                 <div class="permission-value">
