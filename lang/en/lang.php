@@ -7,6 +7,7 @@ return [
         'access_permissions' => 'Manage Permissions',
         'access_group_permissions' => 'Manage User Group Permissions',
         'access_user_permissions' => 'Manage User Permissions',
+        'tab' => 'User Permissions'
     ],
     'permissions' => [
         'menu_label' => 'Permissions',

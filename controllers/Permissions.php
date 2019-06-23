@@ -6,6 +6,10 @@ use Rainlab\User\Models\UserGroup as UserGroupModel;
 
 class Permissions extends \Backend\Classes\Controller
 {
+    public $requiredPermissions = [
+        'jbonnydev.userpermissions.access_permissions'
+    ];
+
     public $implement = [
         'Backend.Behaviors.FormController',
         'Backend.Behaviors.ListController',

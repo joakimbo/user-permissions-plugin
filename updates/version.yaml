@@ -4,3 +4,5 @@
 1.0.2: !!! Various optimization changes, this update is not compatible with previous versions.
 1.0.3: !!! Consolidation of permission functions into a single hasUserPermission() function, other various changes.
 1.1.0: !!! Added requested code field, optimized SQL query and data handling. Changes to permission forms.
+1.1.1:
+    - Fixed so that back-end permissions can control the availability of controlling front-end user permissions

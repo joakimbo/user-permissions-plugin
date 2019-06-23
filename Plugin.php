@@ -8,6 +8,7 @@ use Rainlab\User\Models\User as UserModel;
 use Rainlab\User\Models\UserGroup as UserGroupModel;
 use October\Rain\Exception\ApplicationException;
 use Illuminate\Support\Facades\DB as Db;
+use BackendAuth;
 
 class Plugin extends \System\Classes\PluginBase
 {
@@ -26,26 +27,9 @@ class Plugin extends \System\Classes\PluginBase
         ];
     }
 
-    public function registerPermissions()
-    {
-        return [
-            'jbonnydev.userpermissions.access_permissions' => [
-                'tab'   => 'rainlab.user::lang.plugin.tab',
-                'label' => 'jbonnydev.userpermissions::lang.plugin.access_permissions'
-            ],
-            'jbonnydev.userpermissions.access_user_permissions' => [
-                'tab'   => 'rainlab.user::lang.plugin.tab',
-                'label' => 'jbonnydev.userpermissions::lang.plugin.access_user_permissions'
-            ],
-            'jbonnydev.userpermissions.access_group_permissions' => [
-                'tab'   => 'rainlab.user::lang.plugin.tab',
-                'label' => 'jbonnydev.userpermissions::lang.plugin.access_group_permissions'
-            ],
-        ];
-    }
-
     public function boot()
     {
+        $this->registerPermissions();
         $this->extendRainlabUserSideMenu();
         $this->extendUserModel();
         $this->extendUserGroupModel();
@@ -53,10 +37,27 @@ class Plugin extends \System\Classes\PluginBase
         $this->extendUserGroupController();
     }
 
+    public function registerPermissions()
+    {
+        return [
+            'jbonnydev.userpermissions.access_permissions' => [
+                'tab'   => 'jbonnydev.userpermissions::lang.plugin.tab',
+                'label' => 'jbonnydev.userpermissions::lang.plugin.access_permissions'
+            ],
+            'jbonnydev.userpermissions.access_user_permissions' => [
+                'tab'   => 'jbonnydev.userpermissions::lang.plugin.tab',
+                'label' => 'jbonnydev.userpermissions::lang.plugin.access_user_permissions'
+            ],
+            'jbonnydev.userpermissions.access_group_permissions' => [
+                'tab'   => 'jbonnydev.userpermissions::lang.plugin.tab',
+                'label' => 'jbonnydev.userpermissions::lang.plugin.access_group_permissions'
+            ],
+        ];
+    }
+
     protected function extendRainlabUserSideMenu()
     {
-        Event::listen('backend.menu.extendItems', function($manager)
-        {
+        Event::listen('backend.menu.extendItems', function($manager) {
             $manager->addSideMenuItems('RainLab.User', 'user', [
                 'permissions' => [
                     'label' => 'jbonnydev.userpermissions::lang.permissions.menu_label',
@@ -71,10 +72,9 @@ class Plugin extends \System\Classes\PluginBase
     protected function extendUserModel()
     {
         function getAllowedPermissions($model) {
-            if(!$model->is_activated) {
+            if (!$model->is_activated) {
                 return [];
             }
-
             $groupPermissionsQuery = $model->user_permissions()->where('jbonnydev_userpermissions_user_permission.permission_state', 2)
             ->join('users_groups', 'jbonnydev_userpermissions_user_permission.user_id', '=', 'users_groups.user_id')
             ->join('jbonnydev_userpermissions_group_permission', function ($join) {
@@ -97,11 +97,10 @@ class Plugin extends \System\Classes\PluginBase
                 'jbonnydev_userpermissions_user_permission.permission_id',
                 'jbonnydev_userpermissions_user_permission.permission_state',
                 'jbonnydev_userpermissions_user_permission.created_at',
-                'jbonnydev_userpermissions_user_permission.updated_at');
-
+                'jbonnydev_userpermissions_user_permission.updated_at'
+            );
             $permissionsQueryResult = $model->user_permissions()->select('id', 'code')->where('permission_state', 1)->union($groupPermissionsQuery)->get();
-
-            if(!$permissionsQueryResult) {
+            if (!$permissionsQueryResult) {
                 $permissionsQueryResult = [];
             } else {
                 $permissionsQueryResult = $permissionsQueryResult->toArray();
@@ -143,26 +142,18 @@ class Plugin extends \System\Classes\PluginBase
                 'timestamps' => true,
                 'pivot' => ['permission_state'],
             ];
-
-            $model->bindEvent('model.afterCreate', function() use ($model)
-            {
+            $model->bindEvent('model.afterCreate', function() use ($model) {
                 $permissions = PermissionModel::all();
-                if($permissions)
-                {
-                    foreach($permissions as $permission)
-                    {
+                if ($permissions) {
+                    foreach($permissions as $permission) {
                         $model->user_permissions()->attach($permission->id, ['permission_state' => 2]);
                     }
                 }
-
             });
-
-            $model->addDynamicMethod('hasUserPermission', function($permissionsInput, $match = 'all') use ($model)
-            {
+            $model->addDynamicMethod('hasUserPermission', function($permissionsInput, $match = 'all') use ($model) {
                 if (!is_string($match) || $match != 'all' && $match != 'one') {
                     throw new ApplicationException('second parameter of hasUserPermission() must be of type string with a value of "all" or "one"!');
                 }
-
                 $permissionsInput = normalizePermissionInput($permissionsInput);
                 if (is_array($permissionsInput) && count($permissionsInput) > 0) {
                     $result = [];
@@ -170,13 +161,13 @@ class Plugin extends \System\Classes\PluginBase
                     foreach ($permissionsInput as $permissionInput) {
                         if (is_string($permissionInput)) {
                             $result[] = hasUserPermission($permissionInput, 'code', $allowedPermissions);
-                        } elseif(is_int($permissionInput)) {
+                        } elseif (is_int($permissionInput)) {
                             $result[] = hasUserPermission($permissionInput, 'id', $allowedPermissions);
                         }
                     }
                     if ($match == 'all') {
                         return !in_array(false, $result);
-                    } elseif($match == 'one') {
+                    } elseif ($match == 'one') {
                         return in_array(true, $result);
                     }
                 }
@@ -187,8 +178,7 @@ class Plugin extends \System\Classes\PluginBase
 
     protected function extendUserGroupModel()
     {
-        UserGroupModel::extend(function($model)
-        {
+        UserGroupModel::extend(function($model) {
             $model->belongsToMany['user_permissions'] = ['JBonnyDev\UserPermissions\Models\Permission',
                 'table' => 'jbonnydev_userpermissions_group_permission',
                 'key' => 'group_id',
@@ -196,14 +186,10 @@ class Plugin extends \System\Classes\PluginBase
                 'timestamps' => true,
                 'pivot' => ['permission_state'],
             ];
-
-            $model->bindEvent('model.afterCreate', function() use ($model)
-            {
+            $model->bindEvent('model.afterCreate', function() use ($model) {
                 $permissions = PermissionModel::all();
-                if($permissions)
-                {
-                    foreach($permissions as $permission)
-                    {
+                if ($permissions) {
+                    foreach($permissions as $permission) {
                         $model->user_permissions()->attach($permission->id);
                     }
                 }
@@ -213,60 +199,53 @@ class Plugin extends \System\Classes\PluginBase
 
     protected function extendUserController()
     {
-        Event::listen('backend.form.extendFields', function($widget)
-        {
-
+        Event::listen('backend.form.extendFields', function($widget) {
             // Only for the User controller
-            if (!$widget->getController() instanceof \RainLab\User\Controllers\Users)
-            {
+            if (!$widget->getController() instanceof \RainLab\User\Controllers\Users) {
                 return;
             }
-
             // Only for the User model
-            if (!$widget->model instanceof \RainLab\User\Models\User)
-            {
+            if (!$widget->model instanceof \RainLab\User\Models\User) {
                 return;
             }
-
-
-            $widget->addTabFields([
-                'user_permissions' => [
-                    'tab' => 'Permissions',
-                    'label'   => 'jbonnydev.userpermissions::lang.permissions.menu_label',
-                    'type'    => 'userpermissioneditor',
-                    'mode' => 'radio',
-                    'context' => ['create','preview','update'],
-                ]
-            ]);
+            // only add field if backend user has access
+            if (BackendAuth::getUser()->hasAccess('jbonnydev.userpermissions.access_user_permissions')) {
+                $widget->addTabFields([
+                    'user_permissions' => [
+                        'tab' => 'Permissions',
+                        'label'   => 'jbonnydev.userpermissions::lang.permissions.menu_label',
+                        'type'    => 'userpermissioneditor',
+                        'mode' => 'radio',
+                        'context' => ['create','preview','update'],
+                    ]
+                ]);
+            }
         });
     }
 
     protected function extendUserGroupController()
     {
-        Event::listen('backend.form.extendFields', function($widget)
-        {
+        Event::listen('backend.form.extendFields', function($widget) {
             // Only for the UserGroup controller
-            if (!$widget->getController() instanceof \RainLab\User\Controllers\UserGroups)
-            {
+            if (!$widget->getController() instanceof \RainLab\User\Controllers\UserGroups) {
                 return;
             }
-
             // Only for the UserGroup model
-            if (!$widget->model instanceof \RainLab\User\Models\UserGroup)
-            {
+            if (!$widget->model instanceof \RainLab\User\Models\UserGroup) {
                 return;
             }
-
-
-            $widget->addTabFields([
-                'user_permissions' => [
-                    'tab' => 'Permissions',
-                    'label'   => 'jbonnydev.userpermissions::lang.permissions.menu_label',
-                    'type'    => 'userpermissioneditor',
-                    'mode' => 'checkbox',
-                    'context' => ['create','preview','update'],
-                ]
-            ]);
+            // only add field if backend user has access
+            if (BackendAuth::getUser()->hasAccess('jbonnydev.userpermissions.access_group_permissions')) {
+                $widget->addTabFields([
+                    'user_permissions' => [
+                        'tab' => 'Permissions',
+                        'label'   => 'jbonnydev.userpermissions::lang.permissions.menu_label',
+                        'type'    => 'userpermissioneditor',
+                        'mode' => 'checkbox',
+                        'context' => ['create','preview','update'],
+                    ]
+                ]);
+            }
         });
     }
 
