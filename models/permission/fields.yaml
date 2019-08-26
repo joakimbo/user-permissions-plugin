@@ -15,7 +15,7 @@ fields:
         type: text
         cssClass: form-code
         description: Code for the permission
-        comment: Auto-generated from "Name" field if left empty.
+        comment: jbonnydev.userpermissions::lang.permission.model_code_comment
         attributes:
             maxlength: 128
 

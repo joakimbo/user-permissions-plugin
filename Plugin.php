@@ -212,8 +212,7 @@ class Plugin extends \System\Classes\PluginBase
             if (BackendAuth::getUser()->hasAccess('jbonnydev.userpermissions.access_user_permissions')) {
                 $widget->addTabFields([
                     'user_permissions' => [
-                        'tab' => 'Permissions',
-                        'label'   => 'jbonnydev.userpermissions::lang.permissions.menu_label',
+                        'tab'   => 'jbonnydev.userpermissions::lang.permissions.menu_label',
                         'type'    => 'userpermissioneditor',
                         'mode' => 'radio',
                         'context' => ['create','preview','update'],
@@ -238,8 +237,7 @@ class Plugin extends \System\Classes\PluginBase
             if (BackendAuth::getUser()->hasAccess('jbonnydev.userpermissions.access_group_permissions')) {
                 $widget->addTabFields([
                     'user_permissions' => [
-                        'tab' => 'Permissions',
-                        'label'   => 'jbonnydev.userpermissions::lang.permissions.menu_label',
+                        'tab'   => 'jbonnydev.userpermissions::lang.permissions.menu_label',
                         'type'    => 'userpermissioneditor',
                         'mode' => 'checkbox',
                         'context' => ['create','preview','update'],

@@ -21,6 +21,7 @@ return [
     'permission' => [
         'model_id' => 'Id',
         'model_code' => 'Code',
+        'model_code_comment' => 'Auto-generated from "Name" field if left empty.',
         'model_name' => 'Name',
         'model_desc' => 'Description',
         'delete_permission' => 'Delete Permission',
