@@ -9,6 +9,7 @@ use Rainlab\User\Models\UserGroup as UserGroupModel;
 use October\Rain\Exception\ApplicationException;
 use Illuminate\Support\Facades\DB as Db;
 use BackendAuth;
+use Config;
 
 class Plugin extends \System\Classes\PluginBase
 {
@@ -172,6 +173,9 @@ class Plugin extends \System\Classes\PluginBase
                     }
                 }
                 return false;
+            });
+            $model->addDynamicMethod(Config::get('jbonnydev.userpermissions::hasUserPermissionAlias', 'hasUserPermissionAlias'), function($permissionsInput, $match = 'all') use ($model) {
+                return $model->hasUserPermission($permissionsInput, $match);
             });
         });
     }
