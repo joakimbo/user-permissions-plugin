@@ -6,3 +6,5 @@
 1.1.0: !!! Added requested code field, optimized SQL query and data handling. Changes to permission forms.
 1.1.1:
     - Fixed so that back-end permissions can control the availability of controlling front-end user permissions
+1.1.2:
+    - Added configurable alias for the "hasUserPermission" method name.

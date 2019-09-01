@@ -2,8 +2,8 @@
 
 return [
     /**
-     * Alias for the "hasUserPermission" user method, only change the value on the right.
-     * You can then use that name instead of the standard "hasUserPermission".
+     * This lets you configure your own alias to use instead of the default
+     * "hasUserPermission" method name.
      * */
     'hasUserPermissionAlias' => 'hasUserPermissionAlias'
 ];

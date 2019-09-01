@@ -6,6 +6,17 @@ Front-end user permissions management.
 
 This plugin requires the [RainLab.User](https://github.com/rainlab/user-plugin/) Plugin.
 
+## Available Configurations
+
+    {plugin}/config/config.php
+    [
+        /*
+        * This lets you configure your own alias to use instead of the default
+        * "hasUserPermission" method name. 
+        */
+        'hasUserPermissionAlias' => 'hasUserPermissionAlias'
+    ]
+
 ## Creating Permissions
 
 In the backend, navigate to RainLab "Users" menu, on the left side there should  
