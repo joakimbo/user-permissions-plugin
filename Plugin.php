@@ -194,7 +194,7 @@ class Plugin extends \System\Classes\PluginBase
                 $permissions = PermissionModel::all();
                 if ($permissions) {
                     foreach($permissions as $permission) {
-                        $model->user_permissions()->attach($permission->id);
+                        $model->user_permissions()->attach($permission->id, ['permission_state' => 0]);
                     }
                 }
             });

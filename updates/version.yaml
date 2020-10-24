@@ -8,3 +8,6 @@
     - Fixed so that back-end permissions can control the availability of controlling front-end user permissions
 1.1.2:
     - Added configurable alias for the "hasUserPermission" method name.
+1.1.3:
+    - Fixes below issue when using MariaDB.
+    - Fixed missing default value for column "permission_state" when attaching a permission to a group.
